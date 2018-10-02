@@ -2,12 +2,12 @@
 
 
 require_once "config.php";
-
-$marcos = new Usuario;
-
-$marcos->loadById(1);
-        
-echo $marcos;
+//
+//$marcos = new Usuario;
+//
+//$marcos->loadById(1);
+//        
+//echo $marcos;
         
 //
 //$sql = new Sql();
@@ -28,8 +28,18 @@ echo $marcos;
 //
 //
 
+//$lista = Usuario::getList();
+//
+//echo json_encode($lista);
 
 
+//$search = Usuario::search("mar");
+//
+//echo json_encode($search);
+
+$login = new Usuario;
+$login->login("marcos", "lalalala");
+
+echo $login;
 
     
-//}
