@@ -1,15 +1,13 @@
 <?php
 
-ini_set('display_errors',1);
-ini_set('display_startup_erros',1);
-error_reporting(E_ALL);
+
 
 require_once "config.php";
 
 
 $sql = new Sql();
 
-$result = $sql->select("SELECT * from faqfaquser where user_id = '6'");
+$result = $sql->select("SELECT * from cadastro");
 
 //echo json_encode($result); 
 foreach ($result as $key => $value) {

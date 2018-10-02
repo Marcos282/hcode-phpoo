@@ -6,7 +6,7 @@ class Sql extends PDO {
     
     public function __construct() {
         
-        $this->conn = new PDO("pgsql:host=localhost;dbname=postgres", "postgres", "");
+        $this->conn = new PDO("pgsql:host=localhost;dbname=hcode", "postgres", "mariola123");
     }
     
     private function setParams($statment, $parameters = array()){
@@ -23,7 +23,6 @@ class Sql extends PDO {
     }
 
     public function query($rawQuery, $params = array()) {
-        
         
         
         $stmt = $this->conn->prepare($rawQuery);
