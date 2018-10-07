@@ -2,16 +2,57 @@
 
 require_once ("./vendor/autoload.php");
 
+error_reporting(E_ALL & ~E_NOTICE);
 
-/**
- * This example shows settings to use when sending via Google's Gmail servers.
- * This uses traditional id & password authentication - look at the gmail_xoauth.phps
- * example to see how to use XOAUTH2.
- * The IMAP section shows how to save this message to the 'Sent Mail' folder using IMAP commands.
- */
-
-//Import PHPMailer classes into the global namespace
+// namespace
+use Rain\Tpl;
 use PHPMailer\PHPMailer\PHPMailer;
+
+// config
+$config = array(
+    "base_url"      => null,
+    "tpl_dir"       => "tpl/",
+    "cache_dir"     => "cache/",
+    "remove_comments" => true,
+    "debug"         => true, // set to false to improve the speed
+);
+
+Tpl::configure( $config );
+
+
+// set variables
+$var = array(
+    "variable"  => "Hello World!",
+    "bad_variable"  => "<script>alert('evil javascript here');</script>",
+    "safe_variable"  => "<script>console.log('this is safe')</script>",
+    "version"   => "3.0 Alpha",
+    "menu"		=> array(
+        array("name" => "Home", "link" => "index.php", "selected" => true ),
+        array("name" => "FAQ", "link" => "index.php/FAQ/", "selected" => null ),
+        array("name" => "Documentation", "link" => "index.php/doc/", "selected" => null )
+    ),
+    "week"		=> array( "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ),
+    "user"		=> (object) array("name"=>"Rain", "citizen" => "Earth", "race" => "Human" ),
+    "numbers"	=> array( 3, 2, 1 ),
+    "bad_text"	=> 'Hey this is a malicious XSS <script>alert("auto_escape is always enabled");</script>',
+    "table"		=> array( array( "Apple", "1996" ), array( "PC", "1997" ) ),
+    "title"		=> "Rain TPL 3 - Easy and Fast template engine",
+    "copyright" => "Copyright 2006 - 2012 Rain TPL<br>Project By Rain Team",
+
+);
+
+// draw
+$tpl = new Tpl;
+$tpl->assign( $var );
+$tpl->assign( nome, "Marcos Sousa" );
+$tpl->assign( versao, PHP_VERSION );
+
+
+$html = $tpl->draw("index" ,true);
+
+
+
+
 
 //require '../vendor/autoload.php';
 
@@ -46,7 +87,7 @@ $mail->SMTPAuth = true;
 $mail->Username = "novahost@gmail.com";
 
 //Password to use for SMTP authentication
-$mail->Password = "0000000000000000000000000000000000000000";
+$mail->Password = "0000000000000000000";
 
 //Set who the message is to be sent from
 $mail->setFrom('marcos@novainfo.com.br', 'Marcos Sousa');
@@ -62,7 +103,7 @@ $mail->Subject = 'Testando email com o gmail';
 
 //Read an HTML message body from an external file, convert referenced images to embedded,
 //convert HTML into a basic plain-text alternative body
-$mail->msgHTML(file_get_contents('contents.html'), __DIR__);
+$mail->msgHTML($html);
 
 //Replace the plain text body with one created manually
 $mail->AltBody = 'This is a plain-text message body';
@@ -101,5 +142,16 @@ function save_mail($mail)
     return $result;
 }
 
+
+
+
+
+//class Test{
+//    static public function method( $variable ){
+//        echo "Hi I am a static method, and this is the parameter passed to me: $variable!";
+//    }
+//}
+
+// end
 
 ?>

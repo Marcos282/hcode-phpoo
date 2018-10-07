@@ -1,3 +1,13 @@
 {
-    "name": "marcos"
+    "name": "hcode/mailer",
+    "description": "Estudo do phpmailer",
+    "require": {
+        "phpmailer/phpmailer": "^6.0"
+    },
+    "authors": [
+        {
+            "name": "Marcos Sousa",
+            "email": "novahost@gmail.com"
+        }
+    ]
 }
