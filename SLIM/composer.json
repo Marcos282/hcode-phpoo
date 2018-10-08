@@ -1,0 +1,12 @@
+{
+    "name": "root/slim",
+    "require": {
+        "slim/slim": "2.0"
+    },
+    "authors": [
+        {
+            "name": "Marcos Sousa",
+            "email": "novahost@gmail.com"
+        }
+    ]
+}
