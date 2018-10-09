@@ -6,18 +6,32 @@ class Sql {
 
 //	const HOSTNAME = "187.62.224.202";
 //	const USERNAME = "root";
-//	const PASSWORD = "root";
+//	const PASSWORD = "";
 //	const DBNAME = "db_ecommerce";
+    
+        
 
 	private $conn;
+        private $hostname;
+        private $username;
+        private $password;
+        private $dbname;
+                
 
-	public function __construct()
+	public function __construct($config_db = array())
 	{
+        
+            $this->hostname = $config_db['HOSTNAME'];
+            $this->username = $config_db['USERNAME'];
+            $this->password = $config_db['PASSWORD'];
+            $this->dbname = $config_db['DBNAME'];
+                    
 
 		$this->conn = new \PDO(
-			"mysql:dbname=".Sql::DBNAME.";host=".Sql::HOSTNAME, 
-			Sql::USERNAME,
-			Sql::PASSWORD
+			"mysql:dbname=". $this->dbname.";host=".$this->hostname, 
+			$this->username,
+                        $this->password
+			
 		);
 
 	}
