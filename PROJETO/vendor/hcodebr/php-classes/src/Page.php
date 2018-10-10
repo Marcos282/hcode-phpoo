@@ -13,12 +13,12 @@ class Page {
     ];
 
 
-    public function __construct($opts = array()) {
+    public function __construct($opts = array(),$tpl_dir = "/views/") {
         
         $this->options = array_merge($this->defaults,$opts);
 	
 	$config = array(
-            "tpl_dir"    => BASEDIR . "/views/",
+            "tpl_dir"    => BASEDIR . $tpl_dir,
             "cache_dir"  => BASEDIR . "/views-cache/",
             "debug"      => false // set to false to improve the speed
 	);

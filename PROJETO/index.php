@@ -6,6 +6,7 @@ require_once("./config.php");
 
 use Hcode\DB\Sql;
 use Hcode\Page;
+use Hcode\PageAdmin;
 
 $app = new \Slim\Slim();
 
@@ -23,6 +24,14 @@ $app->get('/', function() {
 //    $results = $sql->select("SELECT * FROM tb_users");
 //
 //    echo json_encode($results);
+});
+
+$app->get('/admin', function() {
+
+    $page = new PageAdmin();
+    
+    $page->setTpl("index");
+    
 });
 
 $app->run();
