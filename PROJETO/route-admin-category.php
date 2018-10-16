@@ -34,7 +34,7 @@ $app->post('/admin/categories/create', function(){
     
     User::verifyLogin();
     
-    $category = new Category();
+    $category = new Category();    
     
     $category->setData($_POST);
     
@@ -79,12 +79,13 @@ $app->get('/admin/categories/:category', function($idcategory) {
 $app->post('/admin/categories/:category', function($idcategory) {
     
     User::verifyLogin();
-    
-    $page = new PageAdmin();
-    
+           
     $category = new Category();
     
-    $category->setData($_POST);
+    $category->get((int)$idcategory);      
+    
+    
+    $category->setData($_POST);         
     
 //    dd($category);
     
@@ -95,19 +96,7 @@ $app->post('/admin/categories/:category', function($idcategory) {
     
 });
 
-$app->get('/categories/:idcategory', function ($idcategory) {
-        
-    $category = new Category;
-    
-    $category->get((int)$idcategory);
-                
-    $page = new Page();
-    
-    $page->setTpl("category", array(
-        "category"=>$category->getValues()
-    ));    
-    
-});
+
 
 
 

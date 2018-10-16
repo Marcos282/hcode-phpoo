@@ -20,7 +20,10 @@ class Category extends Model {
     public function save(){
         
         $sql = new Sql(CONFIG_DB_ECOMERCE);
-                
+        
+        
+//        dd($this->getidcategory());
+        
         $results = $sql->select("CALL sp_categories_save(:idcategory, :descategory)", array(
             ":idcategory"=> $this->getidcategory(),
             ":descategory"=> $this->getdescategory()

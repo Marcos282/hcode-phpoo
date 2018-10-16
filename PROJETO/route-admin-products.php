@@ -47,7 +47,7 @@ $app->post('/admin/products/create(/)', function(){
     $product->setData($_POST);
     
         
-    $product->save();
+    $product->create();
     
     header("Location: /admin/products");
     exit;       

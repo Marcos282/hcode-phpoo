@@ -16,8 +16,20 @@ class Product extends Model {
         return $sql->select("select * from tb_products");
         
     }
-     
-    public function save(){
+    
+    public static function checkList($list){
+        
+        foreach ($list as &$row) {
+            $p = new Product();
+            $p->setData($row);
+            $row = $p->getValues();
+        }
+        
+        return $list;
+        
+    }
+
+        public function save(){
         
         $sql = new Sql(CONFIG_DB_ECOMERCE);
         
@@ -62,6 +74,37 @@ class Product extends Model {
 //        $this->setData($results[0]);
         
         
+    }
+    
+    
+    public function create(){
+                              
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+                
+        $sql->query("INSERT into tb_products (desproduct,vlprice,vlwidth,vlheight,vllength,vlweight,desurl)
+                                      VALUES (:desproduct,:vlprice,:vlwidth,:vlheight,:vllength,:vlweight,:desurl)", array(
+            
+            ":desproduct"=> $this->getdesproduct(),
+            ":vlprice"=> $this->getvlprice(),
+            ":vlwidth"=> $this->getvlwidth(),
+            ":vlheight"=> $this->getvlheight(),
+            ":vllength"=> $this->getvllength(),
+            ":vlweight"=> $this->getvlweight(),
+            ":desurl"=> $this->getdesurl()
+        ));
+//        
+//        $sql->query("INSERT into tb_categories (descategory) VALUES (:descategory)", array(
+//            ":descategory"=> $this->getdesproduct()
+//        ));
+//                 
+//        $results = $sql->select("CALL sp_categories_save(:idcategory, :descategory)", array(
+//            ":idcategory"=> $this->getidcategory(),
+//            ":descategory"=> $this->getdesproduct()
+//        ));
+        
+                           
+//        $this->setData($results[0]);
+                                  
     }
     
     public function get($idproduct){
