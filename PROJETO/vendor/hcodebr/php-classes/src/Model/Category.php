@@ -124,6 +124,32 @@ class Category extends Model {
         
     }
     
+    public function getProductsPage($page = 1,$itensPerPage = 2 ){
+        
+        
+        $start = ($page - 1) * $itensPerPage;
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $results = $sql->select("SELECT SQL_CALC_FOUND_ROWS *
+                        FROM tb_products pai
+                        INNER JOIN tb_productscategories fil ON pai.idproduct = fil.idproduct
+                        INNER JOIN tb_categories net ON fil.idcategory = net.idcategory
+                        AND net.idcategory = :idcategory
+                        LIMIT $start, $itensPerPage;", array(
+                            ":idcategory"=> $this->getidcategory()
+                        ));
+        
+        $fullResult = $sql->select("SELECT FOUND_ROWS() AS NR_TOTAL;"); 
+        
+        return array(
+            "data"=> Product::checkList($results),
+            "total"=>$fullResult[0]["NR_TOTAL"],
+            "pages"=> ceil($fullResult[0]["NR_TOTAL"] / $itensPerPage)
+        );
+
+    }
+    
 }
 
 ?>
