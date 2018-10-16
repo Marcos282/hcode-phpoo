@@ -198,6 +198,34 @@ class Product extends Model {
         $this->checkPhoto();
     }
     
+    
+    public function getFromDesURL($desurl){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $rows = $sql->select("SELECT * from tb_products WHERE desurl = :desurl LIMIT 1;", array(
+            ":desurl"=>$desurl
+        ));
+        
+        $this->setData($rows[0]);
+        
+        
+    }
+    
+    public function getCategories(){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        return $sql->select("SELECT * from tb_categories pai inner join tb_productscategories fil 
+                            ON pai.idcategory = fil.idcategory
+                            WHERE
+                            fil.idproduct = :idproduct;
+                            ", array(
+            ":idproduct"=> $this->getidproduct()
+        ));
+        
+    }
+    
 }
 
 ?>
