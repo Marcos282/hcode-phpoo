@@ -72,6 +72,58 @@ class Category extends Model {
         
     }
     
+    public function getProducts($related = true){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        if($related === true){
+            
+            return $sql->select("SELECT * FROM tb_products
+                          WHERE
+                          idproduct IN (
+                                        SELECT pai.idproduct FROM tb_products pai
+                                    INNER JOIN tb_productscategories fil ON pai.idproduct = fil.idproduct
+                                    AND fil.idcategory = :idcategory)", array(
+                                        "idcategory"=> $this->getidcategory()
+                                    ));
+            
+        }else{
+            
+            return $sql->select("SELECT * FROM tb_products
+                          WHERE
+                          idproduct NOT IN (
+                                        SELECT pai.idproduct FROM tb_products pai
+                                    INNER JOIN tb_productscategories fil ON pai.idproduct = fil.idproduct
+                                    AND fil.idcategory = idcategory)", array(
+                                        "idcategory"=> $this->getidcategory()
+                                    ));
+            
+        }
+        
+    }
+    
+    public function addProduct($product){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $sql->query("INSERT into tb_productscategories (idcategory, idproduct) VALUES (:idcategory,:idproduct)", array(
+            ":idcategory"=> $this->getidcategory(),
+            "idproduct"=>$product->getidproduct()
+        ));
+        
+    }
+    
+    public function removeProduct($product){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $sql->query("DELETE FROM tb_productscategories where idcategory = :idcategory and idproduct = :idproduct", array(
+            ":idcategory"=> $this->getidcategory(),
+            "idproduct"=>$product->getidproduct()
+        ));
+        
+    }
+    
 }
 
 ?>
