@@ -106,7 +106,64 @@ class Cart extends Model {
 
     }
     
+    public function addProduct (Product $product){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $sql->query("INSERT INTO tb_cartsproducts (idcart,idproduct) VALUES (:idcart, :idproduct)", array(
+            
+            ":idcart"=> $this->getidcart(),
+            ":idproduct"=>$product->getidproduct()
+            
+        ));        
+    }
     
+    public function removeProduct (Product $product, $all = false){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        if($all){  // Se desejar remover todos os produtos
+            
+            $sql->select("UPDATE tb_cartsproducts SET dtremoved = NOW() WHERE idcart = :idcart and idproduct = :idproduct and dtremoved  IS NULL", array(
+                
+            ":idcart"=> $this->getidcart(),
+            ":idproduct"=>$product->getidproduct()
+                
+            ));
+            
+        }else{ // Se somente for um produto por vez
+            
+            $sql->select("UPDATE tb_cartsproducts SET dtremoved = NOW() WHERE idcart = :idcart and idproduct = :idproduct and dtremoved  IS NULL LIMIT 1 ", array(
+                
+            ":idcart"=> $this->getidcart(),
+            ":idproduct"=>$product->getidproduct()
+                
+            ));
+            
+        }
+        
+        
+    }
+    
+    public function getProducts(){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+                    
+        
+        $rows = $sql->select("SELECT fil.idproduct, fil.desproduct, fil.vlprice, fil.vlweight, fil.vlheight, fil.vllength, fil.vlweight, fil.desurl, count(*) as nrqtd, SUM(fil.vlprice) as vltotal  FROM tb_cartsproducts pai
+                            INNER JOIN tb_products fil ON pai.idproduct = fil.idproduct
+                            WHERE 
+                            pai.idcart = :idcart AND
+                            pai.dtremoved IS NULL
+                            GROUP BY fil.idproduct, fil.desproduct, fil.vlprice, fil.vlweight, fil.vlheight, fil.vllength, fil.vlweight, fil.desurl 
+                            ORDER BY fil.desproduct", [
+                                "idcart"=> $this->getidcart()
+                            ]);
+
+        return Product::checkList($rows);     
+    }
+    
+     
 }
 
 ?>

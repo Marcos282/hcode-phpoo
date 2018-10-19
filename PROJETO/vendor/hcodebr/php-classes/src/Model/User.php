@@ -28,7 +28,9 @@ class User extends Model {
         
     }
     
-    public static function checkLogin(){
+    public static function checkLogin($inadmin = true){
+        
+//        dd($_SESSION[User::SESSION]);
         
          if(
            !isset($_SESSION[User::SESSION])     
@@ -36,13 +38,13 @@ class User extends Model {
            !$_SESSION[User::SESSION]
            ||
            !(int)$_SESSION[User::SESSION]["iduser"] > 0     
-  
+                 
            ){
            // Não está logado
-             return FALSE;         
+             return false;         
             } else{
-                
-                if($inadmin === true &&(bool)$_SESSION[User::SESSION]["inadmin"] === true ){
+                 
+                if($inadmin === true && (bool)$_SESSION[User::SESSION]["inadmin"] === true ){
                     return true;
                 }else if($inadmin === false){
                     return true;
@@ -76,9 +78,10 @@ class User extends Model {
             
             $user->setData($data);
             
-//            dd($user);
+//            dd($user); 
             
             $_SESSION[User::SESSION] = $user->getValues();
+            
             
             return $user;
             
@@ -89,7 +92,8 @@ class User extends Model {
     }
     
     public static function verifyLogin($inadmin = true){
-        if(User::verifyLogin($inadmin)){
+        
+        if(!User::checkLogin($inadmin)){
            
             header("Location: /admin/login");
             
