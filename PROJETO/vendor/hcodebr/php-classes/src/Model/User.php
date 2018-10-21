@@ -10,6 +10,7 @@ class User extends Model {
     
     const SESSION = "User";
     const SESSION_ERROR_LOGIN = "Error_login";
+    const SESSION_ERROR_REGISTER = "Error_register";
     
 //    const SECRET = "sENHa_cOM_16_KARACtER3s";
 
@@ -345,7 +346,43 @@ class User extends Model {
         return $password;
         
     }
+
+    public static function setRegisterError($msg) {
+        
+        $_SESSION[User::SESSION_ERROR_REGISTER] = $msg;
+        
+    }
     
+        public static function getErrorRegister(){
+        
+        $msg = (isset($_SESSION[User::SESSION_ERROR_REGISTER]) && $_SESSION[User::SESSION_ERROR_REGISTER]) ? $_SESSION[User::SESSION_ERROR_REGISTER] : ""; 
+        
+        User::clearErrorRegister();
+        
+        return $msg;
+        
+    }
+    
+    public static function clearErrorRegister() {
+        
+        $_SESSION[User::SESSION_ERROR_REGISTER] = null;
+        
+    }
+
+    
+    public static function checkLoginExist($login){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $results = $sql->select("SELECT * from tb_users WHERE deslogin = :deslogin", [
+            ":deslogin"=>$login
+        ]);
+        
+        return (count($results) >0);
+        
+        
+    }
+
 }
 
 ?>

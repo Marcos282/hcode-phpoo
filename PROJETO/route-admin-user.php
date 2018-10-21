@@ -7,11 +7,7 @@ use \Hcode\Model\User;
 
 $app->get('/admin', function() {
 
-    
-    
     User::verifyLogin();
-    
-    
     
     $page = new PageAdmin();
     
@@ -192,7 +188,7 @@ $app->post("/admin/users/create", function() {
     
     $user->setData($_POST);
     
-    //dd($user);
+//    dd($user);
     
     $user->save();
     
