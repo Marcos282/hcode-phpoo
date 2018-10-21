@@ -10,7 +10,7 @@ use Hcode\Model\Product;
 
 $app->get('/admin/products(/)', function(){
    
-    User::verifyLogin();
+    User::verifyLogin();        
     
     $product = new Product();
     

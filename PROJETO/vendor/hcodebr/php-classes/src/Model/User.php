@@ -9,6 +9,7 @@ use Hcode\Mailer;
 class User extends Model {
     
     const SESSION = "User";
+    const SESSION_ERROR_LOGIN = "Error_login";
     
 //    const SECRET = "sENHa_cOM_16_KARACtER3s";
 
@@ -30,21 +31,19 @@ class User extends Model {
     
     public static function checkLogin($inadmin = true){
         
-//        dd($_SESSION[User::SESSION]);
-        
          if(
            !isset($_SESSION[User::SESSION])     
            ||
            !$_SESSION[User::SESSION]
            ||
            !(int)$_SESSION[User::SESSION]["iduser"] > 0     
-                 
+  
            ){
            // Não está logado
-             return false;         
+             return FALSE;         
             } else{
-                 
-                if($inadmin === true && (bool)$_SESSION[User::SESSION]["inadmin"] === true ){
+                
+                if($inadmin === true &&(bool)$_SESSION[User::SESSION]["inadmin"] === true ){
                     return true;
                 }else if($inadmin === false){
                     return true;
@@ -78,10 +77,9 @@ class User extends Model {
             
             $user->setData($data);
             
-//            dd($user); 
+//            dd($user);
             
             $_SESSION[User::SESSION] = $user->getValues();
-            
             
             return $user;
             
@@ -95,7 +93,16 @@ class User extends Model {
         
         if(!User::checkLogin($inadmin)){
            
-            header("Location: /admin/login");
+            if($inadmin){
+                
+                header("Location: /admin/login");
+                
+            }else{
+                
+                header("Location: /login");
+                
+            }
+            
             
             exit();
             
@@ -162,7 +169,7 @@ class User extends Model {
             ":iduser"=>  $this->getiduser(),
             ":desperson"=>$this->getdesperson(),
             ":deslogin"=>$this->getdeslogin(),
-            ":despassword"=>$this->getdespassword(),
+            ":despassword"=>$this->User::getPassWordHash($this->getdespassword()),
             ":desemail"=>$this->getdesemail(),
             ":nrphone"=>$this->getnrphone(),
             "inadmin"=>$this->getinadmin()
@@ -284,6 +291,58 @@ class User extends Model {
                             "newpassword"=>$newPassword,
                             "iduser"=> $this->getiduser()
                         ));
+        
+    }
+    
+    public static function setError($msg){
+        
+        $_SESSION[User::SESSION_ERROR_LOGIN]= $msg;
+                                       
+    }
+    
+    public static function getError(){
+        
+        $msg = (isset($_SESSION[User::SESSION_ERROR_LOGIN]) && $_SESSION[User::SESSION_ERROR_LOGIN]) ? $_SESSION[User::SESSION_ERROR_LOGIN] : ""; 
+        
+        User::clearError();
+        
+        return $msg;
+        
+    }
+
+    public static function clearError() {
+        
+        $_SESSION[User::SESSION_ERROR_LOGIN] = null;
+        
+    }
+    
+    public static function getdesperson(){
+        
+        $user = User::getFromSession();
+
+
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $results = $sql->select("SELECT * FROM tb_persons where idperson = :idperson", [
+            ":idperson"=>$user->getidperson()
+        ]);
+        
+        
+        if (count($results )> 0){
+            
+            return $results[0]["desperson"];
+            
+        }
+        
+    }
+    
+    public static function getPassWordHash($password){
+        
+        $password = password_hash($password, PASSWORD_DEFAULT, array(
+        
+             "cost" => 12));
+                 
+        return $password;
         
     }
     
