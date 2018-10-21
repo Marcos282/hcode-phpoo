@@ -189,7 +189,7 @@ class User extends Model {
         
     }
     
-    public static function getForgot($email){
+    public static function getForgot($email, $inadmin = true){
         
         $sql = new Sql(CONFIG_DB_ECOMERCE);
         
@@ -213,7 +213,7 @@ class User extends Model {
                 ":desip"=>$_SERVER["REMOTE_ADDR"]
             ));
             
-            
+             
             if(count($results2)=== 0 ){
                                 
                 throw new \Exception("Não foi possível recuperar a senha.");
@@ -226,7 +226,16 @@ class User extends Model {
                 
                 $code = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, SECRET, $dataRecovery['idrecovery'], MCRYPT_MODE_ECB));
                 
-                $link = "http://brasweb.lignetbrasil.com/admin/forgot/reset?code=$code";
+                if($inadmin === true){
+                    
+                    $link = "http://brasweb.lignetbrasil.com/admin/forgot/reset?code=$code";
+                    
+                }else{
+                    
+                    $link = "http://brasweb.lignetbrasil.com/forgot/reset?code=$code";
+                    
+                }
+                
                 
                 $mailer = new Mailer($data['desemail'], $data['desperson'], 'Redefinir a senha', 'forgot', array(
                     "name"=>$data['desperson'],
