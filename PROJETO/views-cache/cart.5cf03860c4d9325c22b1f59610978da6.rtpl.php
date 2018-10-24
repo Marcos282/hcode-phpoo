@@ -18,7 +18,7 @@
             <div class="col-md-12">
                 <div class="product-content-right">
                     <div class="woocommerce">
-                        <form action="/checkout">
+                        <form action="/checkout" method="GET">
                             <?php if( $error != '' ){ ?>
 
                             <div class="alert alert-danger" role="alert">

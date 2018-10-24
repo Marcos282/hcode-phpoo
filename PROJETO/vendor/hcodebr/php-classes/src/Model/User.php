@@ -11,6 +11,7 @@ class User extends Model {
     const SESSION = "User";
     const SESSION_ERROR_LOGIN = "Error_login";
     const SESSION_ERROR_REGISTER = "Error_register";
+    const SESSION_SUCESS = "Sucess_msg";
     
 //    const SECRET = "sENHa_cOM_16_KARACtER3s";
 
@@ -389,6 +390,76 @@ class User extends Model {
         
         return (count($results) >0);
         
+        
+    }
+    
+    public function getValues() {
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $results =$sql->select("SELECT * from tb_users pai inner join tb_persons fil 
+	ON pai.idperson = fil.idperson
+	WHERE 
+	pai.idperson = :idperson", [
+            ":idperson"=>14
+        ]);
+                           
+        $this->setData($results[0]);                       
+        
+        $values = parent::getValues();
+        
+        return $values; 
+    }
+    
+    
+        public static function setSucessMsg($msg) {
+        
+        $_SESSION[User::SESSION_SUCESS] = $msg;
+        
+    }
+    
+        public static function getSucessMsg(){
+        
+        $msg = (isset($_SESSION[User::SESSION_SUCESS]) && $_SESSION[User::SESSION_SUCESS]) ? $_SESSION[User::SESSION_SUCESS] : ""; 
+        
+        User::clearSucessMsg();
+        
+        return $msg;
+        
+    }
+    
+    public static function clearSucessMsg() {
+        
+        $_SESSION[User::SESSION_SUCESS] = null;
+        
+    }
+
+    public function getOrders() {
+        
+           
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $results = $sql->select("SELECT *
+                     from tb_orders pai 
+                     INNER JOIN tb_ordersstatus fil USING(idstatus) 
+                     INNER JOIN tb_carts net USING(idcart)
+                     INNER JOIN tb_users biz ON biz.iduser = pai.iduser
+                     INNER JOIN tb_addresses tara USING(idaddress)
+                     INNER JOIN tb_persons hept ON tara.idperson = biz.idperson
+                     WHERE 
+                     pai.iduser = :iduser",[
+                         ":iduser"=> $this->getiduser()
+                     ]);
+        
+        if(count($results)> 0){
+            
+            return $results;
+            
+        }else{
+            
+            throw new Exception("Não foi possível realizar a consulta");
+            
+        }
         
     }
 

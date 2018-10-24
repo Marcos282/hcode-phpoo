@@ -22,7 +22,7 @@ require_once ("./route-admin-user.php");
 require_once ("./route-admin-category.php");
 require_once ("./route-admin-products.php");
 
-$app->config('debug', true);
+$app->config('debug', true); 
 
 
 
