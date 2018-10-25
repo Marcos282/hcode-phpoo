@@ -632,4 +632,77 @@ $app->get("/profile/orders/:idorders", function ($idorders){
     
 });
 
+
+$app->get("/profile/change-password", function () {
+    
+    User::verifyLogin(false);
+    
+    $page = new Page();
+    
+    $page->setTpl("profile-change-password", [
+        "changePassError"=> User::getError(),
+        "changePassSuccess"=> User::getSucessMsg()
+    ]);
+    
+});
+
+
+$app->post("/profile/change-password", function (){
+    
+    User::verifyLogin(false);
+            
+    if(!isset($_POST['current_pass']) || empty($_POST['current_pass'])){
+        
+        User::setError("Digite sua senha atual.");
+        header("Location: /profile/change-password");
+        exit;
+        
+    }    
+            
+    if(!isset($_POST['new_pass']) || empty($_POST['new_pass'])){
+        
+        User::setError("Digite a nova senha.");
+        header("Location: /profile/change-password");
+        exit;
+        
+    }    
+            
+    if(!isset($_POST['new_pass_confirm']) || empty($_POST['new_pass_confirm'])){
+        
+        User::setError("Digite a nova senha para confirmar.");
+        header("Location: /profile/change-password");
+        exit;
+        
+    }
+
+    if($_POST["new_pass"] === $_POST["current_pass"]){
+        
+        User::setError("A nova senha precisa ser diferente da senha atual.");
+        header("Location: /profile/change-password");
+        exit;
+        
+    }
+     
+    $user = User::getFromSession();
+    
+    if(!password_verify($_POST["current_pass"], $user->getdespassword())){
+        
+        User::setError("A senha não confere.");
+        header("Location: /profile/change-password");
+        exit;        
+    }
+    
+    $user->setdespassword($_POST["new_pass"]);
+    
+//    dd($_POST["new_pass"]);
+        
+    $user->update();
+    
+    User::setSucessMsg("Senha alterada com sucesso!");
+    header("Location: /profile/change-password");
+    exit;     
+    
+    
+    
+});
 ?>
