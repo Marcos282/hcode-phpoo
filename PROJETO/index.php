@@ -21,6 +21,7 @@ require_once ("./route-site.php");
 require_once ("./route-admin-user.php");
 require_once ("./route-admin-category.php");
 require_once ("./route-admin-products.php");
+require_once ("./route-admin-orders.php");
 
 $app->config('debug', true); 
 

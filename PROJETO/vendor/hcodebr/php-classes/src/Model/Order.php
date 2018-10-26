@@ -5,8 +5,12 @@ namespace Hcode\Model;
 
 use Hcode\DB\Sql;
 use Hcode\Model;
+use Hcode\Model\Cart;
 
 class Order extends Model {
+    
+    const ORDER_ERROR_MSG = "ERROR_MSG";
+    const ORDER_SUCESS_MSG = "SUCESS_MSG";
     
     public function save(){
         
@@ -71,6 +75,99 @@ class Order extends Model {
         
     }
     
+    public static function listAll(){
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+         $results = $sql->select("SELECT *
+                     from tb_orders pai 
+                     INNER JOIN tb_ordersstatus fil USING(idstatus) 
+                     INNER JOIN tb_carts net USING(idcart)
+                     INNER JOIN tb_users biz ON biz.iduser = pai.iduser
+                     INNER JOIN tb_addresses tara USING(idaddress)
+                     INNER JOIN tb_persons hept ON tara.idperson = biz.idperson
+                     ORDER BY pai.idorder ASC
+                     ");
+        
+        if(count($results)> 0){
+            
+            return $results;
+            
+        }
+        
+        
+    }
+
+    public function delete() {
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE);
+        
+        $sql->query("DELETE FROM tb_orders WHERE idorder = :idorder", [
+            ":idorder"=> $this->getidorder()
+        ]);
+        
+    }
+
+    public function getCart() {
+        
+        $cart = new Cart();
+        
+        $cart->get((int) $this->getidcart());
+        
+        return $cart;
+        
+    }
+    
+    
+    public static function setError($msg){
+        
+        $_SESSION[Order::ORDER_ERROR_MSG]= $msg;
+                                       
+    }
+    
+    public static function getError(){
+        
+        $msg = (isset($_SESSION[Order::ORDER_ERROR_MSG]) && $_SESSION[Order::ORDER_ERROR_MSG]) ? $_SESSION[Order::ORDER_ERROR_MSG] : ""; 
+        
+        User::clearError();
+        
+        return $msg;
+        
+    }
+
+    public static function clearError() {
+        
+        $_SESSION[Order::ORDER_ERROR_MSG] = null;
+        
+    }
+    
+
+    
+    
+        public static function setSucessMsg($msg){
+        
+        $_SESSION[Order::ORDER_SUCESS_MSG]= $msg;
+                                       
+    }
+    
+    public static function getSucessMsg(){
+        
+        $msg = (isset($_SESSION[Order::ORDER_SUCESS_MSG]) && $_SESSION[Order::ORDER_SUCESS_MSG]) ? $_SESSION[Order::ORDER_SUCESS_MSG] : ""; 
+        
+        User::clearSucessMsg();
+        
+        return $msg;
+        
+    }
+
+    public static function clearSucessMsg() {
+        
+        $_SESSION[Order::ORDER_SUCESS_MSG] = null;
+        
+    }
+    
+    
+
 } 
 
 
