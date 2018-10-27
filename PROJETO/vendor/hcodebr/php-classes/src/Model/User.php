@@ -125,6 +125,62 @@ class User extends Model {
         
     }
     
+    
+        
+    public static function getPage($page = 1,$itensPerPage = 10 ){
+        
+        
+        $start = ($page - 1) * $itensPerPage;
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE); 
+        
+        $results = $sql->select("SELECT SQL_CALC_FOUND_ROWS *
+                                 FROM tb_users a INNER JOIN tb_persons b USING(idperson)
+                                 ORDER BY b.desperson
+                                 LIMIT $start, $itensPerPage");
+        
+        $fullResult = $sql->select("SELECT FOUND_ROWS() AS NR_TOTAL;"); 
+        
+        return array(
+            "data"=> $results,
+            "total"=>$fullResult[0]["NR_TOTAL"],
+            "pages"=> ceil($fullResult[0]["NR_TOTAL"] / $itensPerPage)
+        );
+
+    }
+    
+    
+    public static function getPageSearch($search, $page, $itensPerPage = 10) {
+        
+        $start = ($page - 1) * $itensPerPage;
+        
+        $sql = new Sql(CONFIG_DB_ECOMERCE); 
+        
+        $results = $sql->select("SELECT SQL_CALC_FOUND_ROWS *
+                                 FROM tb_users a INNER JOIN tb_persons b USING(idperson)
+                                 WHERE                                  
+                                 b.desperson LIKE :search OR
+                                 b.desemail LIKE :search
+                                 ORDER BY b.desperson
+                                 LIMIT $start, $itensPerPage",[
+                                     ":search"=>'%'.$search.'%'
+                                 ]);
+        
+        $fullResult = $sql->select("SELECT FOUND_ROWS() AS NR_TOTAL;"); 
+        
+//        dd($results);
+        
+        return array(
+            "data"=> $results,
+            "total"=>$fullResult[0]["NR_TOTAL"],
+            "pages"=> ceil($fullResult[0]["NR_TOTAL"] / $itensPerPage)
+        );
+        
+        
+    }
+    
+    
+    
     public function save(){
         
         $sql = new Sql(CONFIG_DB_ECOMERCE);
@@ -157,6 +213,8 @@ class User extends Model {
         
         
         $this->setData($results[0]);
+        
+        
         
         
     }
@@ -401,7 +459,7 @@ class User extends Model {
 	ON pai.idperson = fil.idperson
 	WHERE 
 	pai.idperson = :idperson", [
-            ":idperson"=>14
+            ":idperson"=> $this->getidperson()
         ]);
                            
         $this->setData($results[0]);                       
@@ -462,6 +520,8 @@ class User extends Model {
         }
         
     }
+
+    
 
 }
 

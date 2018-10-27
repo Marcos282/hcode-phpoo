@@ -124,14 +124,44 @@ $app->get('/admin/users', function (){
    
     User::verifyLogin();
     
-    $users = User::listAll();
     
 //    dd($users);
+    
+    $search = (isset($_GET["search"])) ? $_GET["search"] : "";
+    $page = (isset($_GET["page"])) ? $_GET["page"] : 1;
+    
+    if($search != ""){
+        
+        $pagination  = User::getPageSearch($search,$page,5);
+        
+    }else{
+        
+        $pagination  = User::getPage($page,5);
+        
+    }
+    
+    
+    $pages = array();
+    
+    for ($x =0; $x < $pagination["pages"]; $x++){
+        
+        array_push($pages, [
+            "href"=>"/admin/users?". http_build_query([
+                "page"=>$x+1,
+                "search"=>$search
+            ]),
+            "text"=>$x+1
+        ]);
+        
+    }
+            
     
     $page = new PageAdmin();
           
     $page->setTpl("users", array(
-        "users"=>$users
+        "users"=>$pagination["data"],
+        "search"=>$search,
+        "pages"=>$pages
     ));
             
 });
@@ -169,6 +199,7 @@ $app->get('/admin/users/:iduser', function ($iduser){
     $user = new User();
     
     $user->get((int)$iduser);
+    
     
     $page = new PageAdmin();
           
